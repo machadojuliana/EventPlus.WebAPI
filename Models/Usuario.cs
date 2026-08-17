@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPlus.WebAPI.Models;
@@ -12,7 +13,7 @@ public partial class Usuario
     [Key]
     public Guid IdUsuario { get; set; }
 
-    public Guid IdTipoUsuario { get; set; }
+    public Guid? IdTipoUsuario { get; set; }
 
     [StringLength(100)]
     [Unicode(false)]
@@ -24,6 +25,7 @@ public partial class Usuario
 
     [StringLength(60)]
     [Unicode(false)]
+    [JsonIgnore]
     public string Senha { get; set; } = null!;
 
     [InverseProperty("IdUsuarioNavigation")]
