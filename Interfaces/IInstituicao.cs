@@ -4,7 +4,7 @@ namespace EventPlus.WebAPI.Interfaces
 {
     public interface IInstituicao
     {
-        Task Cadastrar(Instituicao tipoEvento);
+        Task Cadastrar(Instituicao instituicao);
 
         Task Atualizar(Guid id, Instituicao instituicao);
 

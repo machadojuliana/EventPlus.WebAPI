@@ -58,18 +58,57 @@ namespace EventPlus.WebAPI.Controller
             {
                 var instituicao = new Instituicao
                 {
-                    NomeFantasia = dto.Titulo
+                    Cnpj = dto.Cnpj,
+                    NomeFantasia = dto.NomeFantasia,
+                    Endereco = dto.Endereco
                 };
 
                 await _instituicao.Cadastrar(instituicao);
+                return Ok(instituicao);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error.Message);
+            }
+        }
 
-                return StatusCode(201, instituicao);
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Atualizar(Guid id, [FromBody] InstituicaoDTO dto)
+        {
+            try
+            {
+                var instituicao = new Instituicao
+                {
+                    Cnpj = dto.Cnpj,
+                    NomeFantasia = dto.NomeFantasia,
+                    Endereco = dto.Endereco
+                };
+
+
+                await _instituicao.Atualizar(id, instituicao);
+
+                return Ok(instituicao);
+            }
+            catch (Exception erro)
+            {
+                return BadRequest(erro.Message);
+            }
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Deletar(Guid id)
+        {
+            try
+            {
+                await _instituicao.Deletar(id);
+
+                return NoContent();
             }
             catch (Exception erro)
             {
                 return BadRequest(erro.Message);
             }
         }
-
     }
 }
