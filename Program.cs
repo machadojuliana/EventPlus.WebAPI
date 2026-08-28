@@ -7,9 +7,26 @@ using EventPlus.WebAPI.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// adcionando a swagger
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Insira um token válido para ter acesso aos endpoints da API"
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement {
+        [new OpenApiSecuritySchemeReference ("Bearer, document")] = []
+    });
+});
 
 //configuracao ef core - banco de dados
 builder.Services.AddDbContext<EventContext>(options =>
@@ -86,6 +103,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // redireciona http para https automaticamente
 app.UseHttpsRedirection();

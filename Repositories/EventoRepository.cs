@@ -13,14 +13,34 @@ public class EventoRepository : IEvento
         _context = context;
     }
 
-    public Task Atualizar(Guid id, Evento evento)
+    public async Task Atualizar(Guid id, Evento evento)
     {
-        throw new NotImplementedException();
+        var eventoBuscado = await _context.Evento.FindAsync(id);
+        if (eventoBuscado != null)
+        {
+            eventoBuscado.NomeEvento = evento.NomeEvento;
+            eventoBuscado.Descricao = evento.Descricao;
+            eventoBuscado.DataEvento = evento.DataEvento;
+            eventoBuscado.IdTipoEvento = evento.IdTipoEvento;
+            eventoBuscado.IdInstituicao = evento.IdInstituicao;
+
+            if (!string.IsNullOrEmpty(evento.Urlimagem))
+            {
+                eventoBuscado.Urlimagem = evento.Urlimagem;
+            }
+
+            _context.Evento.Update(eventoBuscado);
+            await _context.SaveChangesAsync();
+        }
     }
 
-    public Task<Evento?> BuscarPorId(Guid id)
+    public async Task<Evento?> BuscarPorId(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Evento
+           .Include(e => e.IdTipoEventoNavigation)
+           .Include(e => e.IdInstituicaoNavigation)
+           .AsNoTracking()
+           .FirstOrDefaultAsync(e => e.IdEvento == id);
     }
 
     public async Task Cadastrar(Evento evento)
@@ -29,19 +49,35 @@ public class EventoRepository : IEvento
         await _context.SaveChangesAsync();
     }
 
-    public Task Deletar(Guid id)
+    public async Task Deletar(Guid id)
     {
-        throw new NotImplementedException();
+        var eventoBuscado = await _context.Evento.FindAsync(id);
+
+        if (eventoBuscado != null)
+        {
+            _context.Evento.Remove(eventoBuscado);
+            await _context.SaveChangesAsync();
+        }
     }
 
-    public Task<List<Evento>> Listar()
+    public async Task<List<Evento>> Listar()
     {
-        throw new NotImplementedException();
+        return await _context.Evento
+            .Include(e => e.IdTipoEventoNavigation)
+            .Include(e => e.IdInstituicaoNavigation)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public Task<List<Evento>> ListarProximos()
+    public async Task<List<Evento>> ListarProximos()
     {
-        throw new NotImplementedException();
+        return await _context.Evento
+           .Include(e => e.IdTipoEventoNavigation)
+           .Include(e => e.IdInstituicaoNavigation)
+           .Where(e => e.DataEvento >= DateTime.Now)
+           .OrderBy(e => e.DataEvento)
+           .AsNoTracking()
+           .ToListAsync();
     }
 }
 

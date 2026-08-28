@@ -9,5 +9,5 @@ namespace EventPlus.WebAPI.Interfaces
         Task<List<Comentario>> Listar();
         Task<List<Comentario>> ListarPorEvento(Guid idEvento);
         Task<Comentario?> BuscarPorId(Guid id);
-    }
+}
 }

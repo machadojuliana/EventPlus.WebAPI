@@ -1,6 +1,7 @@
 ﻿using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using EventPlus.WebAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Controllers;
@@ -71,35 +72,10 @@ public class ComentarioController : ControllerBase
         }
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Atualizar(Guid id, [FromBody] ComentarioDTO dto)
-    {
-        try
-        {
-            var comentarioExistente = await _comentario.BuscarPorId(id);
 
-            if (comentarioExistente == null)
-            {
-                return NotFound("Comentário não encontrado.");
-            }
-
-            var comentario = new Comentario
-            {
-                Descricao = dto.Descricao,
-                Exibe = dto.Exibe
-            };
-
-            await _comentario.Atualizar(id, comentario);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Excluir(Guid id)
+    public async Task<IActionResult> Deletar(Guid id)
     {
         try
         {
@@ -118,4 +94,18 @@ public class ComentarioController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<Comentario>> BuscarPorId(Guid id)
+    {
+        var comentario = await _comentario.BuscarPorId(id);
+
+        if (comentario == null)
+        {
+            return NotFound("Comentário não encontrado.");
+        }
+
+        return Ok(comentario);
+    }
+
 }

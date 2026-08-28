@@ -11,6 +11,6 @@ namespace EventPlus.WebAPI.DTO
         [Required(ErrorMessage = "O identificador do evento é obrigatório.")]
         public Guid IdEvento { get; set; }
 
-        public Guid? IdUsuario { get; set; }
+        public Guid IdUsuario { get; set; }
     }
 }
