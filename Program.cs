@@ -50,6 +50,7 @@ builder.Services.AddScoped<IUsuario, UsuarioRepository> ();
 builder.Services.AddScoped<IEvento, EventoRepository> ();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService >();
 builder.Services.AddScoped<IComentario, ComentarioRepository>();
+builder.Services.AddScoped<IPresenca, PresencaRepository>();
 
 // autenticacao jwt
 // configura como a api vai validar  os tokens recebidos nas requisicoes
@@ -77,7 +78,7 @@ builder.Services.AddAuthentication(options => {
 
             // chave secreta utilizada para validar a assisnatura do token
             IssuerSigningKey = new SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes("Jwt:Key")
+                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
                 )
         };
     });

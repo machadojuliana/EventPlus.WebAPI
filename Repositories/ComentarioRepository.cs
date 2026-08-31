@@ -1,6 +1,7 @@
 ﻿using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventPlus.WebAPI.Repositories
 {
@@ -13,11 +14,6 @@ namespace EventPlus.WebAPI.Repositories
             _context = context;
         }
 
-        public Task<Comentario?> BuscarPorId(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task Cadastrar(Comentario comentario)
         {
             comentario.DataComentario = DateTime.Now;
@@ -25,19 +21,40 @@ namespace EventPlus.WebAPI.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task Deletar(Guid id)
+        public async Task Deletar(Guid id)
         {
-            throw new NotImplementedException();
+            var comentarioBuscado = await _context.Comentario.FindAsync(id);
+            if (comentarioBuscado != null)
+            {
+                _context.Comentario.Remove(comentarioBuscado);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<List<Comentario>> Listar()
+        public async Task<List<Comentario>> Listar()
         {
-            throw new NotImplementedException();
+            return await _context.Comentario
+                .Include(c => c.IdEventoNavigation)
+                .Include(c => c.IdUsuarioNavigation)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public Task<List<Comentario>> ListarPorEvento(Guid idEvento)
+        public async Task<List<Comentario>> ListarPorEvento(Guid idEvento)
         {
-            throw new NotImplementedException();
+            return await _context.Comentario
+                .Where(c => c.IdEvento == idEvento && c.Exibe == true)
+                .Include(c => c.IdUsuarioNavigation)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<Comentario?> BuscarPorId(Guid id)
+        {
+            return await _context.Comentario
+                .Include(c => c.IdEventoNavigation)
+                .Include(c => c.IdUsuarioNavigation)
+                .FirstOrDefaultAsync(c => c.IdComentario == id);
         }
     }
 }
